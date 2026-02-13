@@ -11,7 +11,7 @@ class Servicio(Base):
     nombre = Column(String(80))
     descripcion = Column(String(850))
     costo = Column(DECIMAL(18,2))
-    duracion= Column(Integer)
+    duracion_minutos= Column(Integer)
     estado = Column(Boolean)
     fecha_registro= Column(DateTime)
     fecha_actualizacion= Column(DateTime)
