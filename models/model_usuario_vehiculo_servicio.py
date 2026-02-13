@@ -20,7 +20,7 @@ class vehiculoServicio(Base):
     servicio_id= Column(Integer, ForeignKey('c_servicio.Id'))
     fecha= Column(Date)
     hora=  Column(Time)
-    estatus= Column(Enum(Estatus),default=Estatus.Programado)
+    estatus= Column(Enum(Estado),default=Estatus.Programado)
     estado= Column(Boolean)
     fecha_registro= Column(DateTime)
     fecha_actualizacion=Column(DateTime)
