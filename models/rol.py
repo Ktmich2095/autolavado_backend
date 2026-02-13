@@ -9,7 +9,7 @@ class Rol(Base):
     __tablename__ = "c_rol"
 
     id = Column(Integer, primary_key=True, index=True)
-    nombre = Column(String(45), nullable=False)
+    nombre_rol = Column(String(45), nullable=False)
 
     estado = Column(Boolean)
     # usuarios = relationship("Usuario", back_populates="rol")

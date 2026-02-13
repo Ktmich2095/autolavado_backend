@@ -12,6 +12,8 @@ class AutoBase(BaseModel):
     tipo: str
     anio: int
     estatus: bool
+    fecha_registro:datetime
+    fecha_actualizacion:datetime
 
 class AutoCreate(AutoBase):
     pass

@@ -6,7 +6,7 @@ class ServicioBase(BaseModel):
     nombre: str
     descripcion: str
     costo: float
-    duracion: int
+    duracion_minutos: int
     estado: bool
 
 class ServicioCreate(ServicioBase):

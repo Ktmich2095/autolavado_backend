@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from datetime import datetime
+from datetime import date, datetime, time
 from typing import Optional
 
 from enum import Enum
@@ -16,7 +16,11 @@ class VehiculoServicioBase(BaseModel):
     servicio_id: int
     fecha: date
     hora: time
-    estatus: EstatusSchema
+    estatus
+    
+    
+    
+    atus: EstatusSchema
     estado: bool
 
 class VehiculoServicioCreate(VehiculoServicioBase):

@@ -1,17 +1,21 @@
 from pydantic import BaseModel
 from datetime import datetime
 from typing import Optional
+from sqlalchemy import DateTime
 
 
 class UsuarioBase(BaseModel):
-    ro_Id: int
+    rol_Id: int
     nombre: str
-    apellidoPaterno: str
-    apellidoMaterno: str
+    primer_apellido: str
+    segundo_apellido: str
     direccion: str
     correo_electronico: str
     numero_telefono: str
-    estatus: bool
+    contrasena :str
+    estado: bool
+    fecha_registro:DateTime 
+    fecha_actualizacion:DateTime
 
 class UsuarioCreate(UsuarioBase):
     password: str

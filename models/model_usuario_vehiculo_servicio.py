@@ -4,10 +4,11 @@ from enum import Enum
 
 from config.db import Base
 
-class Estatus(Enum):
+class Solicitud(Enum):
     Programado= "Programado"
     Proceso = "En proceso"
     Realizado= "Realizado"
+    Cancelada="Cancelada"
 
     ''' Clase para escuchar tabla vehiculos '''
 class vehiculoServicio(Base):
