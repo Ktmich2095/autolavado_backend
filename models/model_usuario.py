@@ -1,6 +1,9 @@
 from sqlalchemy import Column, Integer, String, ForeignKey, Boolean, DateTime
+from sqlalchemy.orm import relationship
 from config.db import Base
 from datetime import datetime
+from passlib.context import CryptContext
+from passlib.exc import UnknownHashError
 
 
 class Usuario(Base):
@@ -15,13 +18,13 @@ class Usuario(Base):
     direccion = Column(String(200), nullable=True)
     correo_electronico = Column(String(100), nullable=False, unique=True)
     numero_telefono = Column(String(20), nullable=True)
-    contrasena = Column(String(60), nullable=False)
-
+    contrasena = Column(String(255), nullable=False)
     estatus = Column(Boolean, default=True)
-
     fecha_registro = Column(DateTime, default=datetime.utcnow)
     fecha_actualizacion = Column(
         DateTime,
         default=datetime.utcnow,
         onupdate=datetime.utcnow
     )
+
+    rols = relationship("Rol", back_populates="usuarios")
