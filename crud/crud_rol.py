@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import models.model_rol as model
 from sqlalchemy.orm import Session
 
@@ -44,3 +45,13 @@ def delete_rol(db: Session, rol_id: int):
     db.delete(rol)
     db.commit()
     return rol
+=======
+import models.Rol
+from sqlalchemy.orm import Session
+def get_rol(db: Session, skip: int =0, limit: int =10  ):
+    return db.query(models.rol.Rol).offset(skip).limit(limit).all()
+
+
+
+    
+>>>>>>> 70958b0133b0bad4d396fc8a3f4a0718d6588c0a
