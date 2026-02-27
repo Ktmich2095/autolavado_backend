@@ -4,30 +4,36 @@ from fastapi.responses import RedirectResponse
 # Inicializar app
 app = FastAPI(title="Autolavado API")
 
-# Registrar routers
+# Importar engine y Base
 from config.db import Base, engine
-from routes import routes_usuario, routes_rol, routes_servicios, routes_vehiculos, routes_vehiculos_servicios_usuarios
 
+# 🔥 IMPORTAR TODOS LOS MODELOS (IMPORTANTE)
+from models import model_usuario
+from models import model_rol
+from models import model_servicio
+from models import model_vehiculo
+from models import model_usuario_vehiculo_servicio
 
-# Crear tablas (solo para desarrollo; en producción usar migraciones)
+# Crear tablas (solo desarrollo)
 Base.metadata.create_all(bind=engine)
 
+# Importar routers DESPUÉS
+from routes import (
+    routes_usuario,
+    routes_rol,
+    routes_servicio,
+    routes_vehiculo,
+    routes_usuario_vehiculo_servicio
+)
 
-# Incluir routers definidos en la carpeta routes
-app.include_router(routes_usuario.router)
-app.include_router(routes_rol.router)
-app.include_router(routes_servicios.router)
-app.include_router(routes_vehiculos.router)
-app.include_router(routes_vehiculos_servicios_usuarios.router)
+# Incluir routers
+app.include_router(routes_usuario.usuario)
+app.include_router(routes_rol.rol)
+app.include_router(routes_servicio.servicio)
+app.include_router(routes_vehiculo.vehiculo)
+app.include_router(routes_usuario_vehiculo_servicio.usuario_vehiculo_servicio)
 
-
-# Redirigir la raíz "/" a "/docs"
+# Redirigir raíz
 @app.get("/", include_in_schema=False)
 def root():
     return RedirectResponse(url="/docs")
-
-
-# Ruta de saludo simple
-@app.get("/saludo", tags=["Saludo"])
-def saludo():
-    return {"message": "¡Hola, FastAPI!"}

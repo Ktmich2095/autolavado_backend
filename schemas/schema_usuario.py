@@ -1,88 +1,40 @@
-from pydantic import BaseModel, EmailStr
+'''
+Docstring for schemas.schema_usuarios
+'''
+from typing import Optional
 from datetime import datetime
+from pydantic import BaseModel
 
 class UsuarioBase(BaseModel):
-    rol_id: int
+    '''Clase para modelar los campos de tabla Usuarios'''
+    rol_Id: int
     nombre: str
     primer_apellido: str
-    segundo_apellido: str | None = None
-    direccion: str | None = None
-    correo_electronico: EmailStr
-    numero_telefono: str | None = None
-    estatus: bool = True
-
-
-class UsuarioCreate(BaseModel):
-    rol_id: int
-    nombre: str
-    primer_apellido: str
-    segundo_apellido: str | None = None
-    direccion: str | None = None
-    correo_electronico: EmailStr
-    numero_telefono: str | None = None
+    segundo_apellido: str
+    direccion: str
+    correo_electronico: str
+    numero_telefono: str
     contrasena: str
-
-
-class UsuarioUpdate(BaseModel):
-    rol_id: int | None = None
-    nombre: str | None = None
-    primer_apellido: str | None = None
-    segundo_apellido: str | None = None
-    direccion: str | None = None
-    correo_electronico: EmailStr | None = None
-    numero_telefono: str | None = None
-    estatus: bool | None = None
-    contrasena: str | None = None
-
-
-class Usuario(UsuarioBase):
-    id: int
+    estado: bool
     fecha_registro: datetime
     fecha_actualizacion: datetime
+# pylint: disable=too-few-public-methods, unnecessary-pass
+class UsuarioCreate(UsuarioBase):
+    '''Clase para crear un Rol basado en la tabla Usuarios'''
+    pass
+class UsuarioUpdate(UsuarioBase):
+    '''Clase para actualizar un Rol basado en la tabla Usuarios'''
+    pass
 
+class Usuario(UsuarioBase):
+    '''Clase para realizar operaciones por ID en tabla Usuarios'''
+    Id: int
     class Config:
-        from pydantic import BaseModel, EmailStr
-        from datetime import datetime
+        '''Utilizar el orm para ejecutar las funcionalidades'''
+        from_attributes = True
 
-
-        class UsuarioBase(BaseModel):
-            rol_id: int
-            nombre: str
-            primer_apellido: str
-            segundo_apellido: str | None = None
-            direccion: str | None = None
-            correo_electronico: EmailStr
-            numero_telefono: str | None = None
-            estatus: bool = True
-
-
-        class UsuarioCreate(BaseModel):
-            rol_id: int
-            nombre: str
-            primer_apellido: str
-            segundo_apellido: str | None = None
-            direccion: str | None = None
-            correo_electronico: EmailStr
-            numero_telefono: str | None = None
-            contrasena: str
-
-
-        class UsuarioUpdate(BaseModel):
-            rol_id: int | None = None
-            nombre: str | None = None
-            primer_apellido: str | None = None
-            segundo_apellido: str | None = None
-            direccion: str | None = None
-            correo_electronico: EmailStr | None = None
-            numero_telefono: str | None = None
-            estatus: bool | None = None
-            contrasena: str | None = None
-
-
-        class Usuario(UsuarioBase):
-            id: int
-            fecha_registro: datetime
-            fecha_actualizacion: datetime
-
-            class Config:
-                orm_mode = True
+class UsuarioLogin(BaseModel):
+    '''Clase para realizar login por numero de telefono o correo'''
+    numero_telefono: Optional[str] = None
+    correo_electronico: Optional[str] = None
+    contrasena: str
