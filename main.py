@@ -1,39 +1,20 @@
-from fastapi import FastAPI
-from fastapi.responses import RedirectResponse
+from fastapi import FastAPI, Depends
+from routes.routes_rol import rol
+from routes.routes_usuario import usuario
+from routes.routes_servicio import servicio
+from routes.routes_vehiculo import vehiculo
+from routes.routes_usuario_vehiculo_servicio import usuario_vehiculo_servicio
+from config.security import get_current_user
 
-# Inicializar app
-app = FastAPI(title="Autolavado API")
+app = FastAPI(
+    title="Autolavado Proyecto Académico",
+    description="API "
 
-# Importar engine y Base
-from config.db import Base, engine
-
-# 🔥 IMPORTAR TODOS LOS MODELOS (IMPORTANTE)
-from models import model_usuario
-from models import model_rol
-from models import model_servicio
-from models import model_vehiculo
-from models import model_usuario_vehiculo_servicio
-
-# Crear tablas (solo desarrollo)
-Base.metadata.create_all(bind=engine)
-
-# Importar routers DESPUÉS
-from routes import (
-    routes_usuario,
-    routes_rol,
-    routes_servicio,
-    routes_vehiculo,
-    routes_usuario_vehiculo_servicio
 )
 
-# Incluir routers
-app.include_router(routes_usuario.usuario)
-app.include_router(routes_rol.rol)
-app.include_router(routes_servicio.servicio)
-app.include_router(routes_vehiculo.vehiculo)
-app.include_router(routes_usuario_vehiculo_servicio.usuario_vehiculo_servicio)
+app.include_router(rol)
+app.include_router(usuario)
+app.include_router(vehiculo, dependencies=[Depends(get_current_user)])
+app.include_router(servicio, dependencies=[Depends(get_current_user)])
+app.include_router(usuario_vehiculo_servicio, dependencies=[Depends(get_current_user)])
 
-# Redirigir raíz
-@app.get("/", include_in_schema=False)
-def root():
-    return RedirectResponse(url="/docs")
