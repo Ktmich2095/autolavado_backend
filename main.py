@@ -1,20 +1,20 @@
-from fastapi import FastAPI, Depends
-from routes.routes_rol import rol
-from routes.routes_usuario import usuario
-from routes.routes_servicio import servicio
-from routes.routes_vehiculo import vehiculo
-from routes.routes_usuario_vehiculo_servicio import usuario_vehiculo_servicio
-from config.security import get_current_user
-
-app = FastAPI(
-    title="Autolavado Proyecto Académico",
-    description="API "
-
+from fastapi import FastAPI
+from config.db import Base, engine
+from routes import (
+    auto_routes,
+    rol_routes,
+    servicio_routes,
+    usuario_routes,
+    vehiculo_servicio_routes
 )
 
-app.include_router(rol)
-app.include_router(usuario)
-app.include_router(vehiculo, dependencies=[Depends(get_current_user)])
-app.include_router(servicio, dependencies=[Depends(get_current_user)])
-app.include_router(usuario_vehiculo_servicio, dependencies=[Depends(get_current_user)])
+Base.metadata.create_all(bind=engine)
 
+app = FastAPI(title="AutoLavado API")
+
+app.include_router(usuario_routes.router)  # Login libre
+
+app.include_router(auto_routes.router)
+app.include_router(rol_routes.router)
+app.include_router(servicio_routes.router)
+app.include_router(vehiculo_servicio_routes.router)

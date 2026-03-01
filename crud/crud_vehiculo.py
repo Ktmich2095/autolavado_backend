@@ -1,47 +1,53 @@
-import models.model_vehiculo
-import schemas.schema_vehiculo
 from sqlalchemy.orm import Session
-import models, schemas
+from models.auto import Auto
+from schemas.schema_auto import AutoCreate, AutoUpdate
+from datetime import datetime
+from sqlalchemy.exc import IntegrityError
+from fastapi import HTTPException
 
-def get_vehiculo(db: Session,skip: int = 0, limit: int = 100):
-    return db.query(models.model_vehiculo.Vehiculo).offset(skip).limit(limit).all()
 
-def get_vehiculo_by_nombre(db: Session, placas: str):
-    return db.query(models.model_vehiculo.Vehiculo).filter(models.model_vehiculos.Vehiculo.placas == placas).first()
-
-def create_vehiculo(db:Session, vehiculo: schemas.schema_vehiculo.VehiculoCreate):
-    db_vehiculo = models.model_vehiculo.Vehiculo(
-        usuario_Id = vehiculo.usuario_Id,
-        placas = vehiculo.placas,
-        marca = vehiculo.marca,
-        modelo = vehiculo.modelo,
-        anio = vehiculo.anio,
-        color = vehiculo.color,
-        tipo = vehiculo.tipo,
-        numero_serie = vehiculo.numero_serie,
-        estado = vehiculo.estado,
-        fecha_registro = vehiculo.fecha_registro,
-        fecha_actualizacion = vehiculo.fecha_actualizacion
-    )
-    db.add(db_vehiculo)
+def create_auto(db: Session, auto: AutoCreate):
+    nuevo = Auto(**auto.dict())
+    db.add(nuevo)
     db.commit()
-    db.refresh(db_vehiculo)
-    return db_vehiculo
+    db.refresh(nuevo)
+    return nuevo
 
-def update_vehiculo(db:Session, id: int, vehiculo: schemas.schema_vehiculo.VehiculoUpdate):
-    
-    db_vehiculo = db.query(models.model_vehiculo.Vehiculo).filter(models.model_vehiculos.Vehiculo.Id == id).first()
-    if db_vehiculo:
-        for var, value in vars(vehiculo).items():
-            setattr(db_vehiculo, var, value) if value else None
-        db.add(db_vehiculo)
-        db.commit()
-    db.refresh(db_vehiculo)
-    return db_vehiculo
 
-def delete_vehiculo(db: Session, id: int):
-    db_vehiculo = db.query(models.model_vehiculo.Vehiculo).filter(models.model_vehiculos.Vehiculo.Id == id).first()
-    if db_vehiculo:
-        db.delete(db_vehiculo)
+def get_autos(db: Session):
+    return db.query(Auto).all()
+
+
+def get_auto(db: Session, auto_id: int):
+    return db.query(Auto).filter(Auto.Id == auto_id).first()
+
+
+def update_auto(db: Session, auto_id: int, datos: AutoUpdate):
+    auto = get_auto(db, auto_id)
+    if not auto:
+        return None
+
+    for key, value in datos.dict(exclude_unset=True).items():
+        setattr(auto, key, value)
+
+    auto.fecha_actualizacion = datetime.now()
+    db.commit()
+    db.refresh(auto)
+    return auto
+
+
+def delete_auto(db: Session, auto_id: int):
+    auto = get_auto(db, auto_id)
+    if not auto:
+        return None
+
+    try:
+        db.delete(auto)
         db.commit()
-    return db_vehiculo
+    except IntegrityError:
+        db.rollback()
+        raise HTTPException(
+            status_code=400, 
+            detail="No se puede eliminar el auto porque tiene servicios o asignaciones relacionadas."
+        )
+    return auto

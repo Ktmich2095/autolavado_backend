@@ -1,40 +1,50 @@
-'''
-Docstring for schemas.schema_usuarios
-'''
-from typing import Optional
+from pydantic import BaseModel, validator
 from datetime import datetime
-from pydantic import BaseModel
+from typing import Optional
+
 
 class UsuarioBase(BaseModel):
-    '''Clase para modelar los campos de tabla Usuarios'''
     rol_Id: int
     nombre: str
-    primer_apellido: str
-    segundo_apellido: str
+    apellidoPaterno: str
+    apellidoMaterno: str
     direccion: str
     correo_electronico: str
     numero_telefono: str
-    contrasena: str
     estado: bool
-    fecha_registro: datetime
-    fecha_actualizacion: datetime
-# pylint: disable=too-few-public-methods, unnecessary-pass
+
+
 class UsuarioCreate(UsuarioBase):
-    '''Clase para crear un Rol basado en la tabla Usuarios'''
-    pass
-class UsuarioUpdate(UsuarioBase):
-    '''Clase para actualizar un Rol basado en la tabla Usuarios'''
-    pass
+    password: str
 
-class Usuario(UsuarioBase):
-    '''Clase para realizar operaciones por ID en tabla Usuarios'''
-    Id: int
-    class Config:
-        '''Utilizar el orm para ejecutar las funcionalidades'''
-        from_attributes = True
+    # bcrypt solo admite contraseñas de hasta 72 bytes.
+    # Este validador evita que se envíe una cadena más larga y provoca 422
+    # en lugar de un 500 interno.
+    @validator("password")
+    def password_max_length(cls, v: str) -> str:
+        if len(v.encode("utf-8")) > 72:
+            raise ValueError("La contraseña no puede superar 72 bytes")
+        return v
 
-class UsuarioLogin(BaseModel):
-    '''Clase para realizar login por numero de telefono o correo'''
-    numero_telefono: Optional[str] = None
+
+class UsuarioUpdate(BaseModel):
+    rol_Id: Optional[int] = None
+    nombre: Optional[str] = None
+    apellidoPaterno: Optional[str] = None
+    apellidoMaterno: Optional[str] = None
+    direccion: Optional[str] = None
     correo_electronico: Optional[str] = None
-    contrasena: str
+    numero_telefono: Optional[str] = None
+    estado: Optional[bool] = None
+
+
+class UsuarioResponse(BaseModel):
+    Id: int
+    nombre: str
+    correo_electronico: str
+    fecha_registro: datetime | None = None
+    fecha_actualizacion: datetime | None = None
+
+    model_config = {
+        "from_attributes": True
+    }
